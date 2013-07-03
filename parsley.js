@@ -726,7 +726,7 @@
         // in the field. If it is a required field, a 'field required' error
         // message will be returned, which is all we need.
         var result;
-        if (this.val === '' && ['notnull', 'notblank', 'required'].indexOf(constraint) === -1) {
+        if (this.val === '' && $.inArray(constraint, ['notnull', 'notblank', 'required']) === -1) {
           result = true;
         } else {
           result = this.Validator.validators[ this.constraints[ constraint ].name ]( this.val, this.constraints[ constraint ].requirements, this );
