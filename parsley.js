@@ -122,7 +122,7 @@
         }
 
         // test regExp if not null
-        return '' !== val ? regExp.test( val ) : false;
+        return '' !== val ? regExp.test( val ) : true;
       }
 
       , regexp: function ( val, regExp, self ) {
@@ -719,7 +719,18 @@
       var valid = null;
 
       for ( var constraint in this.constraints ) {
-        var result = this.Validator.validators[ this.constraints[ constraint ].name ]( this.val, this.constraints[ constraint ].requirements, this );
+        // If the value is '' and we want a validator other than `notnull`,
+        // `notblank` or `required`, don't bother running the validator. For
+        // example, if we want to validate an email address, don't display the
+        // 'invalid email address' message if the user has not entered a value
+        // in the field. If it is a required field, a 'field required' error
+        // message will be returned, which is all we need.
+        var result;
+        if (this.val === '' && ['notnull', 'notblank', 'required'].indexOf(constraint) === -1) {
+          result = true;
+        } else {
+          result = this.Validator.validators[ this.constraints[ constraint ].name ]( this.val, this.constraints[ constraint ].requirements, this );
+        }
 
         if ( false === result ) {
           valid = false;
